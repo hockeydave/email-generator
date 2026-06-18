@@ -99,7 +99,7 @@ function Index() {
             <Mail className="h-6 w-6" />
           </div>
           <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Cold Email Generator
+            AI lead email generator for web design agencies.&nbsp;
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
             Tailored outreach for any business — in seconds.
