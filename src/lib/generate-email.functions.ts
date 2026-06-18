@@ -17,15 +17,22 @@ export const generateEmail = createServerFn({ method: "POST" })
     if (!apiKey) throw new Error("AI is not configured. Missing LOVABLE_API_KEY.");
 
     const system =
-      "You are an expert cold-email copywriter. Write concise, high-converting outreach emails. " +
-      "Output ONLY the email itself: a 'Subject:' line followed by a blank line, then the body. " +
+      "You are an expert cold-email copywriter for a web design agency. " +
+      "You write concise, personalized outreach emails to local businesses, pitching website design and redesign services. " +
+      "Output ONLY the email itself in this exact format: a single 'Subject: ...' line, then a blank line, then the email body. " +
       "No preamble, no explanations, no markdown fences.";
 
     const user =
-      `Write a cold email to a prospective ${data.industry} business named "${data.businessName}" ` +
-      `based in ${data.city}. Tone: ${data.tone}. ` +
-      `Keep it under 150 words. Include a clear, low-friction call to action at the end. ` +
-      `Use [Your Name] as the signature placeholder.`;
+      `Write a cold outreach email from a web design agency to "${data.businessName}", ` +
+      `a ${data.industry} business based in ${data.city}. ` +
+      `Tone: ${data.tone}. ` +
+      `Requirements:\n` +
+      `- Compelling, specific subject line (under 60 characters) referencing the business or their industry.\n` +
+      `- Personalized opener that shows you've thought about their business and city.\n` +
+      `- Briefly explain how a modern website (or redesign) helps ${data.industry} businesses win more customers — keep it concrete, not generic.\n` +
+      `- One clear, low-friction call to action at the end (e.g., a quick 15-minute call or a free homepage audit).\n` +
+      `- Under 150 words total in the body.\n` +
+      `- Sign off with [Your Name], Web Design Agency.`;
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
