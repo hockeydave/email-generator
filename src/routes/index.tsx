@@ -87,7 +87,7 @@ function parseEmail(email: string): ParsedEmail {
 
 function Index() {
   const generate = useServerFn(generateEmail);
-  const [email, setEmail] = useState<string>("Subject: Quick website wins for Acme Coffee Roasters\n\nHi there,\n\nI came across Acme Coffee Roasters while exploring local coffee spots in Austin. Your brand story really stands out, and I think your online presence could match that same warmth.\n\nI help specialty coffee shops turn their websites into customer-magnet tools: clear menus, online ordering, and mobile-first design that actually converts visitors into regulars.\n\nWould you be open to a quick 15-minute call next week to explore what a refresh could look like? No pitch, just ideas.\n\nBest,\n[Your Name], Web Design Agency");
+  const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
   const form = useForm<FormValues>({
