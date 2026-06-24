@@ -147,7 +147,7 @@ function Index() {
             AI lead email generator for web design agencies.
           </h1>
           <p className="mx-auto mt-4 max-w-lg text-base text-muted-foreground">
-            Enter a prospect’s details and get a tailored cold email with a subject line and a clear call to action.
+            Generate outreach emails that convert in seconds
           </p>
         </section>
 
