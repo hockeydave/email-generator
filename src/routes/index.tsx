@@ -122,151 +122,184 @@ function Index() {
   const parsed = email ? parseEmail(email) : null;
 
   return (
-    <main className="min-h-screen bg-background px-4 py-16 sm:py-20">
-      <div className="mx-auto max-w-3xl">
-        <header className="mb-12 text-center sm:mb-16">
-          <div className="mx-auto mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
-            <Mail className="h-7 w-7" />
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-border/60 bg-card/50 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
+          <div className="flex items-center gap-2.5">
+            <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/20">
+              <Mail className="h-4.5 w-4.5" />
+            </div>
+            <span className="text-lg font-semibold tracking-tight text-foreground">LeadMail AI</span>
           </div>
-          <h1 className="mx-auto max-w-xl text-balance text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+          <span className="hidden text-sm font-medium text-muted-foreground sm:inline">For web design agencies</span>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+        {/* Hero */}
+        <section className="mb-10 text-center sm:mb-14">
+          <span className="mb-4 inline-flex items-center rounded-full border border-border/60 bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+            <Sparkles className="mr-1.5 h-3.5 w-3.5" />
+            Personalized outreach in seconds
+          </span>
+          <h1 className="mx-auto max-w-2xl text-balance text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
             AI lead email generator for web design agencies.
           </h1>
-          <p className="mx-auto mt-4 max-w-md text-base text-muted-foreground">
-            Enter a few details and get a personalized outreach email with subject line and call to action.
+          <p className="mx-auto mt-4 max-w-lg text-base text-muted-foreground">
+            Enter a prospect’s details and get a tailored cold email with a subject line and a clear call to action.
           </p>
-        </header>
-
-        <section className="space-y-8">
-          <Card className="border border-border/60 bg-card shadow-xl shadow-muted/20">
-            <CardHeader className="space-y-1 px-6 pb-4 pt-6 sm:px-8 sm:pt-8">
-              <CardTitle className="text-xl font-semibold">Prospect details</CardTitle>
-              <CardDescription className="text-sm">
-                The more specific you are, the more personalized the email.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="px-6 pb-6 sm:px-8 sm:pb-8">
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="businessName">Business name</Label>
-                  <Input
-                    id="businessName"
-                    placeholder="e.g. Acme Coffee Roasters"
-                    {...form.register("businessName")}
-                  />
-                  {form.formState.errors.businessName && (
-                    <p className="text-xs text-destructive">
-                      {form.formState.errors.businessName.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="grid gap-6 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="industry">Industry</Label>
-                    <Input
-                      id="industry"
-                      placeholder="e.g. Specialty coffee"
-                      {...form.register("industry")}
-                    />
-                    {form.formState.errors.industry && (
-                      <p className="text-xs text-destructive">
-                        {form.formState.errors.industry.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="city">City</Label>
-                    <Input
-                      id="city"
-                      placeholder="e.g. Austin"
-                      {...form.register("city")}
-                    />
-                    {form.formState.errors.city && (
-                      <p className="text-xs text-destructive">
-                        {form.formState.errors.city.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="tone">Tone of email</Label>
-                  <Select
-                    defaultValue={form.getValues("tone")}
-                    onValueChange={(v) => form.setValue("tone", v as FormValues["tone"])}
-                  >
-                    <SelectTrigger id="tone">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {TONES.map((t) => (
-                        <SelectItem key={t} value={t}>
-                          {t}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <Button type="submit" className="w-full" size="lg" disabled={loading}>
-                  {loading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Generating…
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="mr-2 h-4 w-4" />
-                      Generate Email
-                    </>
-                  )}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-
-          {parsed && (
-            <Card className="overflow-hidden border border-border/60 bg-card shadow-xl shadow-muted/20">
-              <CardHeader className="flex flex-row items-start justify-between gap-4 border-b border-border/60 bg-muted/30 px-6 py-5 sm:px-8">
-                <div className="space-y-1">
-                  <CardTitle className="text-xl font-semibold">Generated email</CardTitle>
-                  <CardDescription className="text-sm">
-                    Review, edit, then copy into your outreach tool.
-                  </CardDescription>
-                </div>
-                <Button variant="outline" size="sm" onClick={copy}>
-                  <Copy className="mr-2 h-4 w-4" />
-                  Copy
-                </Button>
-              </CardHeader>
-              <CardContent className="px-6 py-8 sm:px-10 sm:py-10">
-                {parsed.subject && (
-                  <div className="mb-8">
-                    <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Subject line
-                    </span>
-                    <p className="text-lg font-semibold text-foreground">{parsed.subject}</p>
-                  </div>
-                )}
-                <div className="space-y-4">
-                  <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Email body
-                  </span>
-                  <div className="prose prose-sm max-w-none text-foreground">
-                    {parsed.body.split("\n\n").map((paragraph, i) => (
-                      <p key={i} className="leading-relaxed text-foreground/90">
-                        {paragraph}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </section>
-      </div>
+
+        {/* Form section */}
+        <section className="grid gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <div className="sticky top-6">
+              <Card className="border border-border/60 bg-card shadow-lg shadow-muted/20">
+                <CardHeader className="space-y-1 px-6 pb-4 pt-6">
+                  <CardTitle className="text-lg font-semibold">Prospect details</CardTitle>
+                  <CardDescription className="text-sm">
+                    Specific details create a more personalized email.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="px-6 pb-6">
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                    <div className="space-y-2">
+                      <Label htmlFor="businessName">Business name</Label>
+                      <Input
+                        id="businessName"
+                        placeholder="e.g. Acme Coffee Roasters"
+                        {...form.register("businessName")}
+                      />
+                      {form.formState.errors.businessName && (
+                        <p className="text-xs text-destructive">
+                          {form.formState.errors.businessName.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="grid gap-5 sm:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="industry">Industry</Label>
+                        <Input
+                          id="industry"
+                          placeholder="e.g. Specialty coffee"
+                          {...form.register("industry")}
+                        />
+                        {form.formState.errors.industry && (
+                          <p className="text-xs text-destructive">
+                            {form.formState.errors.industry.message}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="city">City</Label>
+                        <Input
+                          id="city"
+                          placeholder="e.g. Austin"
+                          {...form.register("city")}
+                        />
+                        {form.formState.errors.city && (
+                          <p className="text-xs text-destructive">
+                            {form.formState.errors.city.message}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="tone">Tone of email</Label>
+                      <Select
+                        defaultValue={form.getValues("tone")}
+                        onValueChange={(v) => form.setValue("tone", v as FormValues["tone"])}
+                      >
+                        <SelectTrigger id="tone">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {TONES.map((t) => (
+                            <SelectItem key={t} value={t}>
+                              {t}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                      {loading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Generating…
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          Generate Email
+                        </>
+                      )}
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Result section */}
+          <div className="lg:col-span-7">
+            {parsed ? (
+              <Card className="h-full border border-border/60 bg-card shadow-lg shadow-muted/20">
+                <CardHeader className="flex flex-row items-start justify-between gap-4 border-b border-border/60 bg-muted/30 px-6 py-5">
+                  <div className="space-y-1">
+                    <CardTitle className="text-lg font-semibold">Generated email</CardTitle>
+                    <CardDescription className="text-sm">
+                      Review, edit, then copy into your outreach tool.
+                    </CardDescription>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={copy}>
+                    <Copy className="mr-2 h-4 w-4" />
+                    Copy
+                  </Button>
+                </CardHeader>
+                <CardContent className="px-6 py-8">
+                  {parsed.subject && (
+                    <div className="mb-8">
+                      <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Subject line
+                      </span>
+                      <p className="text-lg font-semibold text-foreground">{parsed.subject}</p>
+                    </div>
+                  )}
+                  <div className="space-y-4">
+                    <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Email body
+                    </span>
+                    <div className="prose prose-sm max-w-none text-foreground">
+                      {parsed.body.split("\n\n").map((paragraph, i) => (
+                        <p key={i} className="leading-relaxed text-foreground/90">
+                          {paragraph}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="flex h-full min-h-[320px] flex-col items-center justify-center rounded-2xl border border-dashed border-border/60 bg-muted/30 px-6 py-12 text-center">
+                <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+                  <Sparkles className="h-5 w-5 text-muted-foreground" />
+                </div>
+                <p className="text-base font-medium text-foreground">Your email will appear here</p>
+                <p className="mt-1 max-w-xs text-sm text-muted-foreground">
+                  Fill out the form and click Generate Email to create a personalized outreach message.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+      </main>
       <Toaster />
-    </main>
+    </div>
   );
 }
