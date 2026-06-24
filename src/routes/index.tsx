@@ -1,4 +1,4 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -24,13 +24,13 @@ import { generateEmail } from "@/lib/generate-email.functions";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Cold Email Generator — Tailored outreach in seconds" },
+      { title: "AI Lead Email Generator — Tailored outreach in seconds" },
       {
         name: "description",
         content:
           "Generate a personalized cold email for any business in seconds. Enter the business name, industry, city, and tone.",
       },
-      { property: "og:title", content: "Cold Email Generator" },
+      { property: "og:title", content: "AI Lead Email Generator" },
       {
         property: "og:description",
         content:
@@ -56,6 +56,34 @@ const TONES: FormValues["tone"][] = [
   "Persuasive",
   "Witty",
 ];
+
+interface ParsedEmail {
+  subject: string;
+  body: string;
+}
+
+function parseEmail(email: string): ParsedEmail {
+  const lines = email.split("\n");
+  let subject = "";
+  let bodyStart = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line.toLowerCase().startsWith("subject:")) {
+      subject = line.replace(/^subject:\s*/i, "").trim();
+      bodyStart = i + 1;
+      break;
+    }
+  }
+
+  // Skip blank lines after subject to find body start
+  while (bodyStart < lines.length && lines[bodyStart].trim() === "") {
+    bodyStart++;
+  }
+
+  const body = lines.slice(bodyStart).join("\n").trim();
+  return { subject, body };
+}
 
 function Index() {
   const generate = useServerFn(generateEmail);
@@ -91,129 +119,152 @@ function Index() {
     toast.success("Copied to clipboard");
   };
 
+  const parsed = email ? parseEmail(email) : null;
+
   return (
-    <main className="min-h-screen bg-gradient-to-b from-background to-muted/40 px-4 py-12">
-      <div className="mx-auto max-w-2xl">
-        <header className="mb-8 text-center">
-          <div className="mx-auto mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
-            <Mail className="h-6 w-6" />
+    <main className="min-h-screen bg-background px-4 py-16 sm:py-20">
+      <div className="mx-auto max-w-3xl">
+        <header className="mb-12 text-center sm:mb-16">
+          <div className="mx-auto mb-6 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/20">
+            <Mail className="h-7 w-7" />
           </div>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            AI lead email generator for web design agencies.&nbsp;
+          <h1 className="mx-auto max-w-xl text-balance text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+            AI lead email generator for web design agencies.
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Tailored outreach for any business — in seconds.
+          <p className="mx-auto mt-4 max-w-md text-base text-muted-foreground">
+            Enter a few details and get a personalized outreach email with subject line and call to action.
           </p>
         </header>
 
-        <Card className="border-border/60 shadow-sm">
-          <CardHeader>
-            <CardTitle>Tell us about the prospect</CardTitle>
-            <CardDescription>
-              The more specific you are, the better the email.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="businessName">Business name</Label>
-                <Input
-                  id="businessName"
-                  placeholder="e.g. Acme Coffee Roasters"
-                  {...form.register("businessName")}
-                />
-                {form.formState.errors.businessName && (
-                  <p className="text-xs text-destructive">
-                    {form.formState.errors.businessName.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="grid gap-5 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="industry">Industry</Label>
-                  <Input
-                    id="industry"
-                    placeholder="e.g. Specialty coffee"
-                    {...form.register("industry")}
-                  />
-                  {form.formState.errors.industry && (
-                    <p className="text-xs text-destructive">
-                      {form.formState.errors.industry.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="city">City</Label>
-                  <Input
-                    id="city"
-                    placeholder="e.g. Austin"
-                    {...form.register("city")}
-                  />
-                  {form.formState.errors.city && (
-                    <p className="text-xs text-destructive">
-                      {form.formState.errors.city.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="tone">Tone of email</Label>
-                <Select
-                  defaultValue={form.getValues("tone")}
-                  onValueChange={(v) => form.setValue("tone", v as FormValues["tone"])}
-                >
-                  <SelectTrigger id="tone">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {TONES.map((t) => (
-                      <SelectItem key={t} value={t}>
-                        {t}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Generating…
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Generate Email
-                  </>
-                )}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        {email && (
-          <Card className="mt-6 border-border/60 shadow-sm">
-            <CardHeader className="flex flex-row items-start justify-between space-y-0">
-              <div>
-                <CardTitle>Your email</CardTitle>
-                <CardDescription>Review, tweak, then send.</CardDescription>
-              </div>
-              <Button variant="outline" size="sm" onClick={copy}>
-                <Copy className="mr-2 h-4 w-4" />
-                Copy
-              </Button>
+        <section className="space-y-8">
+          <Card className="border border-border/60 bg-card shadow-xl shadow-muted/20">
+            <CardHeader className="space-y-1 px-6 pb-4 pt-6 sm:px-8 sm:pt-8">
+              <CardTitle className="text-xl font-semibold">Prospect details</CardTitle>
+              <CardDescription className="text-sm">
+                The more specific you are, the more personalized the email.
+              </CardDescription>
             </CardHeader>
-            <CardContent>
-              <pre className="whitespace-pre-wrap rounded-md bg-muted/50 p-4 font-sans text-sm leading-relaxed text-foreground">
-                {email}
-              </pre>
+            <CardContent className="px-6 pb-6 sm:px-8 sm:pb-8">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="businessName">Business name</Label>
+                  <Input
+                    id="businessName"
+                    placeholder="e.g. Acme Coffee Roasters"
+                    {...form.register("businessName")}
+                  />
+                  {form.formState.errors.businessName && (
+                    <p className="text-xs text-destructive">
+                      {form.formState.errors.businessName.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="industry">Industry</Label>
+                    <Input
+                      id="industry"
+                      placeholder="e.g. Specialty coffee"
+                      {...form.register("industry")}
+                    />
+                    {form.formState.errors.industry && (
+                      <p className="text-xs text-destructive">
+                        {form.formState.errors.industry.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="city">City</Label>
+                    <Input
+                      id="city"
+                      placeholder="e.g. Austin"
+                      {...form.register("city")}
+                    />
+                    {form.formState.errors.city && (
+                      <p className="text-xs text-destructive">
+                        {form.formState.errors.city.message}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="tone">Tone of email</Label>
+                  <Select
+                    defaultValue={form.getValues("tone")}
+                    onValueChange={(v) => form.setValue("tone", v as FormValues["tone"])}
+                  >
+                    <SelectTrigger id="tone">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TONES.map((t) => (
+                        <SelectItem key={t} value={t}>
+                          {t}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Generating…
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      Generate Email
+                    </>
+                  )}
+                </Button>
+              </form>
             </CardContent>
           </Card>
-        )}
+
+          {parsed && (
+            <Card className="overflow-hidden border border-border/60 bg-card shadow-xl shadow-muted/20">
+              <CardHeader className="flex flex-row items-start justify-between gap-4 border-b border-border/60 bg-muted/30 px-6 py-5 sm:px-8">
+                <div className="space-y-1">
+                  <CardTitle className="text-xl font-semibold">Generated email</CardTitle>
+                  <CardDescription className="text-sm">
+                    Review, edit, then copy into your outreach tool.
+                  </CardDescription>
+                </div>
+                <Button variant="outline" size="sm" onClick={copy}>
+                  <Copy className="mr-2 h-4 w-4" />
+                  Copy
+                </Button>
+              </CardHeader>
+              <CardContent className="px-6 py-8 sm:px-10 sm:py-10">
+                {parsed.subject && (
+                  <div className="mb-8">
+                    <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Subject line
+                    </span>
+                    <p className="text-lg font-semibold text-foreground">{parsed.subject}</p>
+                  </div>
+                )}
+                <div className="space-y-4">
+                  <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Email body
+                  </span>
+                  <div className="prose prose-sm max-w-none text-foreground">
+                    {parsed.body.split("\n\n").map((paragraph, i) => (
+                      <p key={i} className="leading-relaxed text-foreground/90">
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </section>
       </div>
       <Toaster />
     </main>
