@@ -5,10 +5,25 @@ const InputSchema = z.object({
   businessName: z.string().trim().min(1).max(120),
   industry: z.string().trim().min(1).max(120),
   city: z.string().trim().min(1).max(120),
-  tone: z.enum(["Professional", "Friendly", "Casual", "Persuasive", "Witty"]),
+  tone: z.enum(["Professional", "Friendly", "Casual", "Bold", "Witty"]),
 });
 
 export type GenerateEmailInput = z.infer<typeof InputSchema>;
+
+function toneInstructions(tone: GenerateEmailInput["tone"]) {
+  switch (tone) {
+    case "Professional":
+      return "Use formal, polished language. Avoid contractions, slang, and emojis. Keep sentences precise and courteous.";
+    case "Friendly":
+      return "Use a warm, conversational tone. Write as if speaking to a peer. Use contractions and approachable language, but stay respectful.";
+    case "Casual":
+      return "Keep it relaxed and informal, but still clear and relevant. Light and easy to read.";
+    case "Bold":
+      return "Use confident, persuasive wording. Be direct, assertive, and compelling. Show strong conviction that a redesign will drive results.";
+    case "Witty":
+      return "Add a touch of cleverness or a light, industry-relevant observation. Keep it tasteful and never sarcastic at the prospect's expense.";
+  }
+}
 
 export const generateEmail = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => InputSchema.parse(data))
@@ -27,8 +42,8 @@ export const generateEmail = createServerFn({ method: "POST" })
 
     const user =
       `Write a cold outreach email from a web design agency to "${data.businessName}", ` +
-      `a ${data.industry} business based in ${data.city}. ` +
-      `Tone: ${data.tone}. ` +
+      `a ${data.industry} business based in ${data.city}.\n\n` +
+      `Tone: ${data.tone}. ${toneInstructions(data.tone)}\n\n` +
       `Requirements:\n` +
       `- Compelling, specific subject line (under 60 characters) referencing the business or their industry.\n` +
       `- Personalized opener that leads with an industry-specific observation, pain point, or opportunity relevant to ${data.industry} businesses — make it clear you understand their market, not just their name.\n` +
