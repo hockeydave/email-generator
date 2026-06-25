@@ -42,9 +42,9 @@ export const Route = createFileRoute("/")({
 });
 
 const FormSchema = z.object({
-  businessName: z.string().trim().min(1, "Required").max(120),
-  industry: z.string().trim().min(1, "Required").max(120),
-  city: z.string().trim().min(1, "Required").max(120),
+  businessName: z.string().trim().min(1, "Business name is required").max(120, "Business name must be under 120 characters"),
+  industry: z.string().trim().min(1, "Industry is required").max(120, "Industry must be under 120 characters"),
+  city: z.string().trim().min(1, "City is required").max(120, "City must be under 120 characters"),
   tone: z.enum(["Professional", "Friendly", "Casual", "Bold", "Witty"]),
 });
 type FormValues = z.infer<typeof FormSchema>;
