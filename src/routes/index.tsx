@@ -60,19 +60,25 @@ const TONES: FormValues["tone"][] = [
 interface ParsedEmail {
   subject: string;
   body: string;
+  cta: string;
 }
 
 function parseEmail(email: string): ParsedEmail {
   const lines = email.split("\n");
   let subject = "";
+  let cta = "";
   let bodyStart = 0;
+  let ctaIndex = -1;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
     if (line.toLowerCase().startsWith("subject:")) {
       subject = line.replace(/^subject:\s*/i, "").trim();
       bodyStart = i + 1;
-      break;
+    }
+    if (line.toLowerCase().startsWith("cta:")) {
+      cta = line.replace(/^cta:\s*/i, "").trim();
+      ctaIndex = i;
     }
   }
 
@@ -81,8 +87,11 @@ function parseEmail(email: string): ParsedEmail {
     bodyStart++;
   }
 
-  const body = lines.slice(bodyStart).join("\n").trim();
-  return { subject, body };
+  // Body ends before the CTA line (or end of email if no CTA)
+  const bodyEnd = ctaIndex >= 0 ? ctaIndex : lines.length;
+  const body = lines.slice(bodyStart, bodyEnd).join("\n").trim();
+
+  return { subject, body, cta };
 }
 
 function Index() {
