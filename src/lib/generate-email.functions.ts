@@ -48,7 +48,7 @@ export const generateEmail = createServerFn({ method: "POST" })
       `- Compelling, specific subject line (under 60 characters) referencing the business or their industry.\n` +
       `- Personalized opener that leads with an industry-specific observation, pain point, or opportunity relevant to ${data.industry} businesses — make it clear you understand their market, not just their name.\n` +
       `- Briefly explain how a modern website (or redesign) helps ${data.industry} businesses win more customers — keep it concrete, not generic.\n` +
-      `- Under 150 words total in the body.\n` +
+      `- Write 150-200 words in the body.\n` +
       `- End with a clear, low-friction call to action (e.g., a quick 15-minute call or a free homepage audit) written as a single 'CTA: ...' line.\n` +
       `- Sign off with [Your Name], Web Design Agency.\n` +
       `- Format: Subject: ...\\n\\n[body]\\n\\nCTA: ...`;
