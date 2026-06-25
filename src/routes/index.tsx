@@ -45,7 +45,7 @@ const FormSchema = z.object({
   businessName: z.string().trim().min(1, "Required").max(120),
   industry: z.string().trim().min(1, "Required").max(120),
   city: z.string().trim().min(1, "Required").max(120),
-  tone: z.enum(["Professional", "Friendly", "Casual", "Persuasive", "Witty"]),
+  tone: z.enum(["Professional", "Friendly", "Casual", "Bold", "Witty"]),
 });
 type FormValues = z.infer<typeof FormSchema>;
 
@@ -53,7 +53,7 @@ const TONES: FormValues["tone"][] = [
   "Professional",
   "Friendly",
   "Casual",
-  "Persuasive",
+  "Bold",
   "Witty",
 ];
 
