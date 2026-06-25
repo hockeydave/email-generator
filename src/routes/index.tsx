@@ -60,19 +60,25 @@ const TONES: FormValues["tone"][] = [
 interface ParsedEmail {
   subject: string;
   body: string;
+  cta: string;
 }
 
 function parseEmail(email: string): ParsedEmail {
   const lines = email.split("\n");
   let subject = "";
+  let cta = "";
   let bodyStart = 0;
+  let ctaIndex = -1;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
     if (line.toLowerCase().startsWith("subject:")) {
       subject = line.replace(/^subject:\s*/i, "").trim();
       bodyStart = i + 1;
-      break;
+    }
+    if (line.toLowerCase().startsWith("cta:")) {
+      cta = line.replace(/^cta:\s*/i, "").trim();
+      ctaIndex = i;
     }
   }
 
@@ -81,8 +87,11 @@ function parseEmail(email: string): ParsedEmail {
     bodyStart++;
   }
 
-  const body = lines.slice(bodyStart).join("\n").trim();
-  return { subject, body };
+  // Body ends before the CTA line (or end of email if no CTA)
+  const bodyEnd = ctaIndex >= 0 ? ctaIndex : lines.length;
+  const body = lines.slice(bodyStart, bodyEnd).join("\n").trim();
+
+  return { subject, body, cta };
 }
 
 function Index() {
@@ -262,27 +271,37 @@ function Index() {
                     Copy
                   </Button>
                 </CardHeader>
-                <CardContent className="px-6 py-8">
+                <CardContent className="space-y-8 px-6 py-8">
                   {parsed.subject && (
-                    <div className="mb-8">
+                    <div>
                       <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                         Subject line
                       </span>
                       <p className="text-lg font-semibold text-foreground">{parsed.subject}</p>
                     </div>
                   )}
-                  <div className="space-y-4">
-                    <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Email body
-                    </span>
-                    <div className="prose prose-sm max-w-none text-foreground">
-                      {parsed.body.split("\n\n").map((paragraph, i) => (
-                        <p key={i} className="leading-relaxed text-foreground/90">
-                          {paragraph}
-                        </p>
-                      ))}
+                  {parsed.body && (
+                    <div>
+                      <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Email body
+                      </span>
+                      <div className="prose prose-sm max-w-none text-foreground">
+                        {parsed.body.split("\n\n").map((paragraph, i) => (
+                          <p key={i} className="leading-relaxed text-foreground/90">
+                            {paragraph}
+                          </p>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
+                  {parsed.cta && (
+                    <div className="rounded-xl border border-primary/20 bg-primary/5 px-5 py-4">
+                      <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-primary">
+                        Call to action
+                      </span>
+                      <p className="font-medium text-foreground">{parsed.cta}</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ) : (
