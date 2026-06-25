@@ -271,27 +271,37 @@ function Index() {
                     Copy
                   </Button>
                 </CardHeader>
-                <CardContent className="px-6 py-8">
+                <CardContent className="space-y-8 px-6 py-8">
                   {parsed.subject && (
-                    <div className="mb-8">
+                    <div>
                       <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                         Subject line
                       </span>
                       <p className="text-lg font-semibold text-foreground">{parsed.subject}</p>
                     </div>
                   )}
-                  <div className="space-y-4">
-                    <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Email body
-                    </span>
-                    <div className="prose prose-sm max-w-none text-foreground">
-                      {parsed.body.split("\n\n").map((paragraph, i) => (
-                        <p key={i} className="leading-relaxed text-foreground/90">
-                          {paragraph}
-                        </p>
-                      ))}
+                  {parsed.body && (
+                    <div>
+                      <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Email body
+                      </span>
+                      <div className="prose prose-sm max-w-none text-foreground">
+                        {parsed.body.split("\n\n").map((paragraph, i) => (
+                          <p key={i} className="leading-relaxed text-foreground/90">
+                            {paragraph}
+                          </p>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
+                  {parsed.cta && (
+                    <div className="rounded-xl border border-primary/20 bg-primary/5 px-5 py-4">
+                      <span className="mb-1 block text-xs font-semibold uppercase tracking-wider text-primary">
+                        Call to action
+                      </span>
+                      <p className="font-medium text-foreground">{parsed.cta}</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ) : (
