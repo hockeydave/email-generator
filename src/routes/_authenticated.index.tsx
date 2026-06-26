@@ -21,7 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Toaster } from "@/components/ui/sonner";
 import { generateEmail } from "@/lib/generate-email.functions";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "AI Lead Email Generator — Tailored outreach in seconds" },
