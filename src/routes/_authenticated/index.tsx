@@ -141,7 +141,19 @@ function Index() {
             </div>
             <span className="text-lg font-semibold tracking-tight text-foreground">LeadMail AI</span>
           </div>
-          <span className="hidden text-sm font-medium text-muted-foreground sm:inline">For web design agencies</span>
+          <div className="flex items-center gap-3">
+            <span className="hidden text-sm font-medium text-muted-foreground sm:inline">For web design agencies</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={async () => {
+                await supabase.auth.signOut();
+                navigate({ to: "/auth" });
+              }}
+            >
+              Sign out
+            </Button>
+          </div>
         </div>
       </header>
 
