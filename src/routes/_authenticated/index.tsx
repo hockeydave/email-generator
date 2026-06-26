@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
+import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,7 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Toaster } from "@/components/ui/sonner";
 import { generateEmail } from "@/lib/generate-email.functions";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "AI Lead Email Generator — Tailored outreach in seconds" },
@@ -95,6 +96,7 @@ function parseEmail(email: string): ParsedEmail {
 }
 
 function Index() {
+  const navigate = useNavigate();
   const generate = useServerFn(generateEmail);
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -141,7 +143,19 @@ function Index() {
             </div>
             <span className="text-lg font-semibold tracking-tight text-foreground">LeadMail AI</span>
           </div>
-          <span className="hidden text-sm font-medium text-muted-foreground sm:inline">For web design agencies</span>
+          <div className="flex items-center gap-3">
+            <span className="hidden text-sm font-medium text-muted-foreground sm:inline">For web design agencies</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={async () => {
+                await supabase.auth.signOut();
+                navigate({ to: "/auth" });
+              }}
+            >
+              Sign out
+            </Button>
+          </div>
         </div>
       </header>
 
