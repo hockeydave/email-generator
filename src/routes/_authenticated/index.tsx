@@ -96,6 +96,7 @@ function parseEmail(email: string): ParsedEmail {
 }
 
 function Index() {
+  const navigate = useNavigate();
   const generate = useServerFn(generateEmail);
   const [email, setEmail] = useState<string>("");
   const [loading, setLoading] = useState(false);
